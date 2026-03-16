@@ -1,7 +1,7 @@
 --[[
 AscendUI Library — Full standalone UI module extracted from AscendPaid
 Usage with loadstring:
-  local AscendUI = loadstring(game:HttpGet("RAW_URL"))()
+  local AscendUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/L4rdberk/lord/refs/heads/main/aa"))()
   AscendUI.init()  -- builds window + nav
   -- Then add content to tabs:
   AscendUI.add_to_tab("main", function(scroll)
@@ -14,6 +14,9 @@ Usage with loadstring:
 
 -- Services
 if not game:IsLoaded() then game.Loaded:Wait() end
+local cloneref = cloneref or function(s) return s end
+local E = {}
+E._handlers = {}
 local Players = cloneref(game:GetService("Players"))
 local _P = Players.LocalPlayer
 local _GE = getgenv and getgenv() or _G
@@ -37,6 +40,22 @@ local Camera = workspace.CurrentCamera
 local vp = Camera.ViewportSize
 local CameraInput = require(LocalPlayer.PlayerScripts:WaitForChild("PlayerModule"):WaitForChild("CameraModule"):WaitForChild("CameraInput"))
 local IS_MOBILE = UserInputService.TouchEnabled and not UserInputService.MouseEnabled
+local State = State or {scroll_frames = {}}
+local Sounds = {}
+local function play_sound() end
+local function save_data() end
+local function load_data() return {} end
+local function disable_all_scrolling()
+for _, f in ipairs(State and State.scroll_frames or {}) do
+if f and f.Parent then f.ScrollingEnabled = false end
+end
+end
+local function enable_all_scrolling()
+for _, f in ipairs(State and State.scroll_frames or {}) do
+if f and f.Parent then f.ScrollingEnabled = true end
+end
+end
+
 
 if not writefile or not readfile or not isfolder or not listfiles then
 warn('[ASCEND] File operations not supported')
@@ -1544,7 +1563,7 @@ disable_all_scrolling()
 active_slider_input = inp
 end
 end)
-ScriptJanitor:Add(UserInputService.InputChanged:Connect(function(inp)
+UserInputService.InputChanged:Connect(function(inp
 if not dragging then return end
 if IS_MOBILE then
 if active_slider_input ~= inp then return end
@@ -1565,7 +1584,7 @@ if callback then
 callback(value)
 end
 end))
-ScriptJanitor:Add(UserInputService.InputEnded:Connect(function(inp)
+UserInputService.InputEnded:Connect(function(inp
 if not dragging then return end
 if IS_MOBILE then
 if active_slider_input ~= inp then return end
@@ -1843,7 +1862,7 @@ return k, v
 end)()
 screen:SetAttribute(_AK, _AV)
 local function nuke_ui()
-pcall(function() ScriptJanitor:Cleanup() end)
+
 screen:Destroy()
 if E.screen1 then E.screen1:Destroy() end
 local _GE2 = getgenv and getgenv() or _G
@@ -2343,7 +2362,7 @@ active_drag_input = inp
 drag_start = inp.Position
 start_pos = E.main.Position
 State.has_moved_during_drag = false
-CameraInput.setInputEnabled(false)
+pcall(function() CameraInput.setInputEnabled(false) end)
 end
 end
 E.header.InputBegan:Connect(start_drag)
@@ -2351,7 +2370,7 @@ E.main.InputBegan:Connect(start_drag)
 if E.title_button then
 E.title_button.InputBegan:Connect(start_drag)
 end
-ScriptJanitor:Add(UserInputService.InputChanged:Connect(function(inp)
+UserInputService.InputChanged:Connect(function(inp
 if not State.ui_dragging then return end
 if State.prev_drag.dragging or State.cprev_drag.dragging then return end
 if not IS_MOBILE and State.slider_dragging then return end
@@ -2374,7 +2393,7 @@ if State.client_preview_open and E.client_preview.Visible then
 E.client_preview.Position = get_client_preview_pos()
 end
 end))
-ScriptJanitor:Add(UserInputService.InputEnded:Connect(function(inp)
+UserInputService.InputEnded:Connect(function(inp
 if not State.ui_dragging then return end
 if IS_MOBILE then
 if active_drag_input ~= inp then return end
@@ -2384,7 +2403,7 @@ if inp.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
 end
 State.ui_dragging = false
 active_drag_input = nil
-CameraInput.setInputEnabled(true)
+pcall(function() CameraInput.setInputEnabled(true) end)
 task.spawn(function()
 task.wait(0.05)
 State.has_moved_during_drag = false
@@ -2946,7 +2965,7 @@ State.client_zoom_level = math.min(10, State.client_zoom_level + 0.5)
 ClientPrev.update()
 end
 end)
-ScriptJanitor:Add(Camera:GetPropertyChangedSignal('ViewportSize'):Connect(function()
+Camera:GetPropertyChangedSignal('ViewportSize':Connect(function()
 if E.main and E.main.Visible then
 E.main.Position = clamp_frame(E.main, State.preview_open)
 E.saved_pos = E.main.Position
@@ -2958,7 +2977,7 @@ E.client_preview.Position = get_client_preview_pos()
 end
 end
 end))
-ScriptJanitor:Add(UserInputService.InputBegan:Connect(function(inp, gameProcessed)
+UserInputService.InputBegan:Connect(function(inp, gameProcessed
 if gameProcessed then return end
 if inp.KeyCode == State.toggle_keybind then
 if E.main and E.main.Parent then
@@ -2970,7 +2989,7 @@ end
 end
 end
 end))
-ScriptJanitor:Add(LocalPlayer.CharacterAdded:Connect(function(char)
+LocalPlayer.CharacterAdded:Connect(function(char
 local saved_avatar = State.applied_id
 local appearanceReady = false
 local appearanceConn
@@ -3010,7 +3029,7 @@ end
 end
 if E._handlers and E._handlers.fav_update_star then E._handlers.fav_update_star() end
 end))
-ScriptJanitor:Add(Players.PlayerAdded:Connect(function(player)
+Players.PlayerAdded:Connect(function(player
 if player ~= LocalPlayer then
 local charAddedConn
 charAddedConn = player.CharacterAdded:Connect(function(char)
@@ -3056,7 +3075,7 @@ end)
 end
 end
 end))
-ScriptJanitor:Add(Players.PlayerRemoving:Connect(function(player)
+Players.PlayerRemoving:Connect(function(player
 ESPSystem.RemoveESP(player)
 if State.player_original_descs then
 State.player_original_descs[player.UserId] = nil
@@ -3238,7 +3257,7 @@ nav.label.TextColor3 = rgb_color
 end
 end
 end)
-ScriptJanitor:Add(rgb_connection)
+rgb_connection
 end
 local function stop_rgb_loop()
 if rgb_connection then
@@ -5151,7 +5170,7 @@ end
 end
 end)
 end
-E.build()
+build_window()
 do
 create_toggle(E.settings_right, 'Unlock FPS', State.fps_unlocked, function(enabled)
 State.fps_unlocked = enabled
@@ -5341,7 +5360,7 @@ if State.font_enabled == true then
 apply_fonts_to_game(State.current_font)
 end
 end)
-ScriptJanitor:Add(LocalPlayer.CharacterAdded:Connect(function(character)
+LocalPlayer.CharacterAdded:Connect(function(character
 task.wait(0.4)
 local appearanceReady = false
 local appearanceConn
@@ -5470,10 +5489,10 @@ if player ~= LocalPlayer then
 handle_player(player)
 end
 end
-ScriptJanitor:Add(Players.PlayerAdded:Connect(function(player)
+Players.PlayerAdded:Connect(function(player
 handle_player(player)
 end))
-ScriptJanitor:Add(Players.PlayerRemoving:Connect(function(player)
+Players.PlayerRemoving:Connect(function(player
 ESPSystem.RemoveESP(player)
 if handle_player_conns[player] then
 for _, conn in ipairs(handle_player_conns[player]) do
@@ -5488,12 +5507,12 @@ if State.apply_counts[player] then
 State.apply_counts[player] = nil
 end
 end))
-ScriptJanitor:Add(LocalPlayer:GetPropertyChangedSignal("Team"):Connect(function()
+LocalPlayer:GetPropertyChangedSignal("Team":Connect(function()
 if State.esp_enabled then
 ESPSystem.RefreshAll()
 end
 end))
-ScriptJanitor:Add(UserInputService.InputEnded:Connect(function(inp)
+UserInputService.InputEnded:Connect(function(inp
 if inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch then
 if State.slider_dragging then
 State.slider_dragging = false
@@ -5501,7 +5520,7 @@ enable_all_scrolling()
 end
 end
 end))
-ScriptJanitor:Add(game.DescendantAdded:Connect(function(obj)
+game.DescendantAdded:Connect(function(obj
 if not State.font_enabled then return end
 if not (obj:IsA("TextLabel") or obj:IsA("TextButton") or obj:IsA("TextBox")) then return end
 task.defer(function()
