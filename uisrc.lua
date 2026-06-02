@@ -145,12 +145,10 @@ local function MakeDraggable(frame, handle)
             dragging = true
             dragStart = input.Position
             startPos = frame.Position
-            ui.ModalEnabled = true
             local connection
             connection = input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
                     dragging = false
-                    ui.ModalEnabled = false
                     if connection then
                         connection:Disconnect()
                     end
@@ -604,6 +602,7 @@ function Library:_CreateMainv0rtexd()
         BorderSizePixel = 0,
         Size = UDim2.new(0, s.v0rtexd.Width, 0, s.v0rtexd.Height),
         ClipsDescendants = false,
+        Active = true,
         Parent = self.screenGui
     })
     CreateCorner(self.container, 5)
@@ -612,6 +611,7 @@ function Library:_CreateMainv0rtexd()
     self.topBar = CreateInstance("Frame", {
         Name = "TopBar",
         BackgroundTransparency = 1,
+        Active = true,
         Size = UDim2.new(1, 0, 0, 45),
         Parent = self.container
     })
