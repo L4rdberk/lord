@@ -625,7 +625,8 @@ function Library:_CreateMainv0rtexd()
         Position = UDim2.new(0, 10, 0, 0),
         TextXAlignment = Enum.TextXAlignment.Left,
         TextSize = textsize.Title,
-        Size = UDim2.new(0.5, 0, 1, 0),
+        AutomaticSize = Enum.AutomaticSize.X,
+        Size = UDim2.new(0, 0, 1, 0),
         Parent = self.topBar
     })
 
@@ -669,29 +670,6 @@ function Library:_CreateMainv0rtexd()
 end
 
 function Library:_Createv0rtexdControls()
-    local closeBtn = CreateInstance("ImageButton", {
-        Name = "Close",
-        ImageColor3 = c.TextDark,
-        Image = "rbxassetid://119943770201674",
-        BackgroundTransparency = 1,
-        AnchorPoint = Vector2.new(1, 0),
-        Position = UDim2.new(1, -10, 0, 15),
-        Size = UDim2.new(0, 15, 0, 15),
-        Parent = self.topBar
-    })
-
-    closeBtn.MouseButton1Click:Connect(function()
-        self:Destroy()
-    end)
-
-    closeBtn.MouseEnter:Connect(function()
-        CreateTween(closeBtn, {ImageColor3 = Color3.fromRGB(255, 100, 100)}, animationspeed.Fast)
-    end)
-
-    closeBtn.MouseLeave:Connect(function()
-        CreateTween(closeBtn, {ImageColor3 = c.TextDark}, animationspeed.Fast)
-    end)
-
     local resizeBtn = CreateInstance("ImageButton", {
         Name = "Resize",
         ImageColor3 = Color3.fromRGB(110, 110, 110),
@@ -806,6 +784,7 @@ end
 function Library:_ToggleMinimize()
     self.minimized = not self.minimized
     if self.minimized then
+        self._originalHeight = self.container.AbsoluteSize.Y
         if self._acrylicBlur then
             self._acrylicBlur:SetEnabled(false)
         end
@@ -819,8 +798,10 @@ function Library:_ToggleMinimize()
             self._acrylicBlur:SetEnabled(true)
         end
         CreateTween(self.container, {Size = UDim2.new(0, self.container.AbsoluteSize.X, 0, self._originalHeight)}, animationspeed.Slow)
-        task.delay(0.1, function()
-            CreateTween(self.mainContent, {Size = UDim2.new(1, 0, 1, -46)}, animationspeed.Normal)
+        task.delay(animationspeed.Slow * 0.5, function()
+            if not self.minimized then
+                CreateTween(self.mainContent, {Size = UDim2.new(1, 0, 1, -46)}, animationspeed.Normal)
+            end
         end)
         if self.resizeBtn then
             self.resizeBtn.Visible = true
