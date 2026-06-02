@@ -868,7 +868,7 @@ function Library:SaveConfig(configName)
     end
     
     local success, err = pcall(function()
-        writefile("AscendConfigs/" .. configName .. ".json", hs:JSONEncode(configData))
+        writefile("ASCEND/Lord/" .. configName .. ".json", hs:JSONEncode(configData))
     end)
     
     if success then
@@ -900,7 +900,7 @@ function Library:LoadConfig(configName)
         return false
     end
     
-    local path = "AscendConfigs/" .. configName .. ".json"
+    local path = "ASCEND/Lord/" .. configName .. ".json"
     if not isfile(path) then
         self:Notify({
             Title = "Error",
@@ -952,7 +952,7 @@ function Library:DeleteConfig(configName)
         return false
     end
     
-    local path = "AscendConfigs/" .. configName .. ".json"
+    local path = "ASCEND/Lord/" .. configName .. ".json"
     if isfile(path) then
         delfile(path)
         self:Notify({
@@ -964,6 +964,7 @@ function Library:DeleteConfig(configName)
     end
     return false
 end
+
 
 function Library:GetConfigs()
     return GetAvailableConfigs()
