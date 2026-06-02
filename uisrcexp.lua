@@ -166,6 +166,11 @@ local function MakeDraggable(frame, handle)
     handle.InputBegan:Connect(OnInputBegan)
     handle.InputChanged:Connect(OnInputChanged)
 
+    if handle ~= frame then
+        frame.InputBegan:Connect(OnInputBegan)
+        frame.InputChanged:Connect(OnInputChanged)
+    end
+
     ui.InputChanged:Connect(function(input)
         if input == dragInput and dragging then
             local delta = input.Position - dragStart
@@ -409,6 +414,7 @@ function Library.new(title, configFolder)
     self._toggleKey = Enum.KeyCode.RightControl
     self._visible = true
     self._originalHeight = s.v0rtexd.Height
+    self._originalWidth = s.v0rtexd.Width
     self._minSize = Vector2.new(s.Minv0rtexd.Width, s.Minv0rtexd.Height)
     self._maxSize = Vector2.new(s.Maxv0rtexd.Width, s.Maxv0rtexd.Height)
     self._mobileToggle = nil
@@ -777,6 +783,7 @@ function Library:_SetupSmartResize(handle)
             local newHeight = math.clamp(startSize.Y + delta.Y, self._minSize.Y, self._maxSize.Y)
             self.container.Size = UDim2.new(0, newWidth, 0, newHeight)
             self._originalHeight = newHeight
+            self._originalWidth = newWidth
         end
     end)
 end
@@ -785,11 +792,13 @@ function Library:_ToggleMinimize()
     self.minimized = not self.minimized
     if self.minimized then
         self._originalHeight = self.container.AbsoluteSize.Y
+        self._originalWidth = self.container.AbsoluteSize.X
+        local minimizedWidth = math.max(self.titleLabel.AbsoluteSize.X + 40, 120)
         if self._acrylicBlur then
             self._acrylicBlur:SetEnabled(false)
         end
-        CreateTween(self.mainContent, {Size = UDim2.new(1, 0, 0, 0)}, animationspeed.Slow)
-        CreateTween(self.container, {Size = UDim2.new(0, self.container.AbsoluteSize.X, 0, 45)}, animationspeed.Slow)
+        CreateTween(self.mainContent, {Size = UDim2.new(1, 0, 0, 0)}, animationspeed.Fast)
+        CreateTween(self.container, {Size = UDim2.new(0, minimizedWidth, 0, 45)}, animationspeed.Slow)
         if self.resizeBtn then
             self.resizeBtn.Visible = false
         end
@@ -797,7 +806,7 @@ function Library:_ToggleMinimize()
         if self._acrylicBlur then
             self._acrylicBlur:SetEnabled(true)
         end
-        CreateTween(self.container, {Size = UDim2.new(0, self.container.AbsoluteSize.X, 0, self._originalHeight)}, animationspeed.Slow)
+        CreateTween(self.container, {Size = UDim2.new(0, self._originalWidth, 0, self._originalHeight)}, animationspeed.Slow)
         task.delay(animationspeed.Slow * 0.5, function()
             if not self.minimized then
                 CreateTween(self.mainContent, {Size = UDim2.new(1, 0, 1, -46)}, animationspeed.Normal)
